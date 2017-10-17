@@ -32,7 +32,7 @@ public class CellsRenderer {
 		    GL11.glRotatef(180, 1F, 0, 0);
 		    GL11.glTranslatef(-1F, 1F, 0);
 		    GL11.glRotatef(180, 1F, 0, 0);
-		    GL11.glScalef((1/(float)CellsClient.getMain().WIDTH)*2, (1/(float)CellsClient.getMain().HEIGHT)*2, 0);
+		    GL11.glScalef((1/(float)CellsClient.getMain().width)*2, (1/(float)CellsClient.getMain().HEIGHT)*2, 0);
 		    //Call the renderTick method of the current gui
 			ui.renderTick();
 		}

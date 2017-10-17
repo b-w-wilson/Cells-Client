@@ -14,7 +14,7 @@ public class ImageResource {
 			this.resourceLocation = registerTexture(resourceLocation);
 		}
 		private int registerTexture(String loc) {
-			return CellsClient.getMain().loader.loadTexture(loc);
+			return CellsClient.getMain().LOADER.loadTexture(loc);
 		}
 	}
 	
