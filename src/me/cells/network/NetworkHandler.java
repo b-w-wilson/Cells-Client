@@ -1,6 +1,7 @@
 package me.cells.network;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 public class NetworkHandler {
 	ThreadNioClient client;
@@ -10,16 +11,29 @@ public class NetworkHandler {
 		Thread t = new Thread(client);
 		t.setDaemon(true);
 		t.start();
-
 	}
+	CountDownLatch latch = new CountDownLatch(1);
 	
-	public void sendMessage(String msg) {
+	public ResponceHandler sendMessage(String msg) {
 		ResponceHandler handler = new ResponceHandler();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					client.send(msg.getBytes(), handler);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				handler.waitForResponse();
+				latch.countDown();
+			}
+		}, "Connection Waiter").start();
 		try {
-			client.send(msg.getBytes(), handler);
-		} catch (IOException e) {
+			latch.await();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		handler.waitForResponse();
+		return handler;
 	}
 }

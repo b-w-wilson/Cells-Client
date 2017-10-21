@@ -52,6 +52,7 @@ public class CellsTextureLoader {
         try {
             return ImageIO.read(new File(loc));
         } catch (IOException e) {
+        	System.out.println("Cant read file at " + loc);
             e.printStackTrace();
         }
         return null;

@@ -4,8 +4,8 @@ import me.cells.main.CellsClient;
 
 public class ImageResource {
 	
-	public static Resource fonts = new ImageResource.Resource("./assets/fonts.png", 0);
-	
+	public static Resource loading = new ImageResource.Resource("./assets/blocks.png", 45);
+
 	public static class Resource {
 		public int resourceLocation;
 		public int frameCount;
@@ -14,7 +14,7 @@ public class ImageResource {
 			this.resourceLocation = registerTexture(resourceLocation);
 		}
 		private int registerTexture(String loc) {
-			return CellsClient.getMain().LOADER.loadTexture(loc);
+			return CellsClient.LOADER.loadTexture(loc);
 		}
 	}
 	

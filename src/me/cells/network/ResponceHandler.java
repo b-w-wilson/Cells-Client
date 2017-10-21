@@ -1,7 +1,7 @@
 package me.cells.network;
 
 public class ResponceHandler {
-	private byte[] rsp = null;
+	public byte[] rsp = null;
 
 	public synchronized boolean handleResponse(byte[] rsp) {
 		this.rsp = rsp;
@@ -9,14 +9,15 @@ public class ResponceHandler {
 		return true;
 	}
 
-	public synchronized void waitForResponse() {
+	public synchronized byte[] waitForResponse() {
 		while (this.rsp == null) {
 			try {
 				this.wait();
 			} catch (InterruptedException e) {
 			}
 		}
-
 		System.out.println(new String(this.rsp));
+
+		return this.rsp;
 	}
 }

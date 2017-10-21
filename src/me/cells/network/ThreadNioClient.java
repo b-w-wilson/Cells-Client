@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import me.cells.main.CellsClient;
+import me.cells.util.Config;
 
 public class ThreadNioClient implements Runnable {
 
@@ -116,7 +116,7 @@ public class ThreadNioClient implements Runnable {
 		socketChannel.configureBlocking(false);
 
 		// Connect to server
-		socketChannel.connect(new InetSocketAddress(CellsClient.hostAddress, CellsClient.port));
+		socketChannel.connect(new InetSocketAddress(Config.HOST_ADDRESS, Config.PORT));
 
 		// Queue a channel registration since the caller is not the selecting thread. As part of the registration we'll register an interest in connection events. These are raised when a channel is ready to complete connection establishment.
 		synchronized (this.pendingChanges) {

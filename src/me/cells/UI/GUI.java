@@ -9,7 +9,7 @@ public interface GUI {
 	public String getName();
 
 	//init method, throwing an exception whenever there is an error
-	public void init() throws Exception;
+	public void init();
 	
 	//renderTick method, called to draw onto the screen
 	public void renderTick();
