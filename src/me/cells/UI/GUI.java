@@ -22,4 +22,11 @@ public interface GUI {
 
 	//onClick method, taking x and y parameters, and allows GUI's to do specific mouse click handling.
 	public void onClick(double x, double y);
+
+	/**
+	 * Returns the new position of the mouse whenever it is moved
+	 * @param xPos
+	 * @param yPos
+	 */
+	public void onMouseMove(double xPos, double yPos);
 }

@@ -74,8 +74,8 @@ public class ThreadNioClient implements Runnable {
 					}
 
 					// Check what event is available and deal with it
-					if (key.isConnectable()) {//Has finished?
-						this.finishConnection(key);
+					if (key.isConnectable()) {//Has the server acknowledged the client and added it to the selector?
+						this.completeConnection(key);
 					} else if (key.isReadable()) {//Has data ready to be read?
 						this.read(key);
 					} else if (key.isWritable()) {//Is ready to have data written?
@@ -91,9 +91,10 @@ public class ThreadNioClient implements Runnable {
 	//Queue data to be sent to the server, and registering a responce handler
 	public void send(byte[] data, ResponceHandler handler) throws IOException {
 		SocketChannel socket = this.initiateConnection();
-
 		// Register the response handler
-		this.rspHandlers.put(socket, handler);
+		synchronized (rspHandlers) {
+			this.rspHandlers.put(socket, handler);
+		}
 
 		// And queue the data we want written
 		synchronized (this.pendingData) {
@@ -125,6 +126,27 @@ public class ThreadNioClient implements Runnable {
 
 		return socketChannel;
 	}
+
+	//Once the channel is ready to be connected, this method is called and sets it to write, the connection is now ready for data transfer. Begin by writing the waiting data
+	private void completeConnection(SelectionKey key) throws IOException {
+		SocketChannel socketChannel = (SocketChannel) key.channel();
+		
+		try {
+			socketChannel.finishConnect();
+		} catch (IOException e) {
+			// Cancel the channel's registration with our selector
+			synchronized (rspHandlers) {
+				ResponceHandler handler = (ResponceHandler) this.rspHandlers.get(socketChannel);
+				handler.cancel();
+			}
+			key.cancel();
+			return;
+		}
+
+		// Register an interest in writing on this channel
+		key.interestOps(SelectionKey.OP_WRITE);
+	}
+
 
 	//Read incoming data sent from the server
 	private void read(SelectionKey key) throws IOException {
@@ -162,6 +184,8 @@ public class ThreadNioClient implements Runnable {
 			// The handler has seen enough, close the connection
 			socketChannel.close();
 			socketChannel.keyFor(this.selector).cancel();
+			rspHandlers.remove(socketChannel);
+
 		}
 	}
 
@@ -189,22 +213,4 @@ public class ThreadNioClient implements Runnable {
 			}
 		}
 	}
-
-	//Finish it all off, close it and stuff
-	private void finishConnection(SelectionKey key) throws IOException {
-		SocketChannel socketChannel = (SocketChannel) key.channel();
-
-		try {
-			socketChannel.finishConnect();
-		} catch (IOException e) {
-			// Cancel the channel's registration with our selector
-			System.out.println(e);
-			key.cancel();
-			return;
-		}
-
-		// Register an interest in writing on this channel
-		key.interestOps(SelectionKey.OP_WRITE);
-	}
-
 }

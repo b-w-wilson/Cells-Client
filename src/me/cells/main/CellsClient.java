@@ -48,7 +48,7 @@ import org.lwjgl.opengl.GL;
 import me.cells.UI.GUI;
 import me.cells.UI.GuiLoading;
 import me.cells.network.NetworkHandler;
-import me.cells.render.CellsRenderer;
+import me.cells.render.Renderer;
 import me.cells.render.CellsTextureLoader;
 import me.cells.util.Config;
 import me.cells.world.CellsWorld;
@@ -64,7 +64,7 @@ public class CellsClient implements Runnable {
 	public static double mouseY = 0;
 	
 
-	public final CellsRenderer renderer = new CellsRenderer();
+	public final Renderer renderer = new Renderer();
 	public final EventHandler eventHandler = new EventHandler();
 	public static final CellsTextureLoader LOADER = new CellsTextureLoader();
 	public static final Random R = new Random();
@@ -103,7 +103,7 @@ public class CellsClient implements Runnable {
 	}
 
 	//Ends the game, and destroys any GUI's, windows or callbacks.
-	public void closeGame() throws Exception {
+	public void closeGame() throws RuntimeException {
 		glfwFreeCallbacks(window);
 		glfwDestroyWindow(window);
 		glfwTerminate();
@@ -128,7 +128,7 @@ public class CellsClient implements Runnable {
 		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
 		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE);
 		//GLFW.glfwWindowHint(GLFW.GLFW_MAXIMIZED, GLFW.GLFW_TRUE);
-		window = glfwCreateWindow(Config.WIDTH, Config.HEIGHT, "Window", glfwGetPrimaryMonitor(), NULL);
+		window = glfwCreateWindow(Config.WIDTH, Config.HEIGHT, "Window", NULL /*glfwGetPrimaryMonitor()*/, NULL);
 	
 		
 		if (window == NULL) {
@@ -150,7 +150,6 @@ public class CellsClient implements Runnable {
 		
 		glfwSetScrollCallback(window, ((window, xoffset, yoffset) -> {
 			eventHandler.handleScrollEvent(window, xoffset, yoffset);
-
 		}));
 
 		//Sets up the rendering of the window with VSync capabilities, and the correct scaling.
@@ -178,17 +177,16 @@ public class CellsClient implements Runnable {
 	}
 
 	//Switch the GUI by replacing the current GUI with the new one from the parameter. Then clear all objects, before calling the init method of the new GUI
-	public static void switchGUI(GUI ui) {
+	public static synchronized void switchGUI(GUI ui) {
 		currentGui = ui;
 		ui.init();
 	}
 
 	//Run tick method, runs every 10 milliseconds and renders everything in the game.
-	public void runTick() throws Throwable {
+	public void runTick() throws RuntimeException {
 		if (glfwWindowShouldClose(window)) {
 			closeGame();
 		}
-		//NETWORK_HANDLER.sendMessage(S.nextLine());
 		renderer.render();
 	}
 

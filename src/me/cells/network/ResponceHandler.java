@@ -1,7 +1,8 @@
 package me.cells.network;
 
 public class ResponceHandler {
-	public byte[] rsp = null;
+	byte[] rsp = null;
+	volatile boolean cancelled = false;
 
 	public synchronized boolean handleResponse(byte[] rsp) {
 		this.rsp = rsp;
@@ -10,14 +11,20 @@ public class ResponceHandler {
 	}
 
 	public synchronized byte[] waitForResponse() {
-		while (this.rsp == null) {
+		while (this.rsp == null && !cancelled) {
 			try {
 				this.wait();
 			} catch (InterruptedException e) {
 			}
 		}
-		System.out.println(new String(this.rsp));
-
+		if(rsp != null) {
+			System.out.println(new String(this.rsp));
+		}
 		return this.rsp;
+	}
+	
+	public synchronized void cancel() {
+		this.cancelled = true;
+		this.notify();
 	}
 }

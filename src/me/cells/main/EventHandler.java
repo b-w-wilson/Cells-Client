@@ -5,6 +5,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
+import org.lwjgl.glfw.GLFW;
+
 import me.cells.UI.GUI;
 import me.cells.util.Config;
 
@@ -27,7 +29,7 @@ public class EventHandler {
 	//Handles all mouse click events, taking 4 parameters, all sent from the lambda expression in the startGame method in the Main class.
 	public void handleMouseEvent(long window, int button, int action, int mods) {
 		//If the left mouse button is pressed, when it is released do this.
-		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
+		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW.GLFW_RELEASE){
 			//Get the current position of the mouse 
 			double x = CellsClient.mouseX;
 			double y = (Config.HEIGHT - CellsClient.mouseY);
@@ -38,9 +40,11 @@ public class EventHandler {
 	}
 
 	//Handles the mouses current position event. Assigns the two variables, mouseX and mouseY in the Main class to the current position of the mouse.
-	public void handleMousePositionEvent(long window, double xpos, double ypos) {
-		CellsClient.mouseX = xpos;
-		CellsClient.mouseY = ypos;
+	public void handleMousePositionEvent(long window, double xPos, double yPos) {
+		GUI gui = CellsClient.getCurrentGui();
+		gui.onMouseMove(xPos, yPos);
+		CellsClient.mouseX = xPos;
+		CellsClient.mouseY = yPos;
 	}
 
 	public void handleScrollEvent(long window, double xoffset, double yoffset) {

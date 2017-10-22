@@ -16,7 +16,7 @@ import me.cells.UI.GUI;
 import me.cells.main.CellsClient;
 import me.cells.util.Config;
 
-public class CellsRenderer {
+public class Renderer {
 	//render method, which can throw an exception if something goes wrong. Is called by the runTick method in the main class.
 	public void render() throws RuntimeException{
 		//Clears the colour and depth bits of the screen
@@ -29,7 +29,7 @@ public class CellsRenderer {
 		    //Translate and position the screen so that the buttom left hand corner is (0,0), and scale the screen so that it is the same size of the width and height.
 		    GL11.glRotatef(180, 1F, 0, 0);
 		    GL11.glTranslatef(-1F, 1F, 0);
-		    GL11.glRotatef(180, 1F, 0, 0);
+		    GL11.glRotatef(120, 1F, 0, 0);
 		    GL11.glScalef((1/(float)Config.WIDTH)*2, (1/(float)Config.HEIGHT)*2, 0);
 		    //Call the renderTick method of the current gui
 			ui.renderTick();
