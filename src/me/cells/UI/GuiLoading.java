@@ -29,7 +29,6 @@ public class GuiLoading extends GuiHelper implements GUI {
 	    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		glClearColor((float)(255F / 255F), (float)(237F / 255F), (float)(212F / 255F), 1.0f);
 		this.drawAnimatedTexturedSquare(ImageResource.loading, Config.WIDTH/2-100, Config.HEIGHT/2-100, 200, 200);
-		System.out.println(DATA.bitsOfData);
 		if(DATA.bitsOfData != null) {
 			String[] tiles = new String(DATA.bitsOfData).split(";");
 			for(String t : tiles) {
@@ -59,6 +58,22 @@ public class GuiLoading extends GuiHelper implements GUI {
 	@Override
 	public void onMouseMove(double xPos, double yPos) {
 		
+	}
+
+	@Override
+	public float getRotation() {
+		return 180;
+	}
+
+	@Override
+	public void handleScrollEvent(double xoffset, double yoffset) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public float getScale() {
+		return 1F;
 	}
 
 }

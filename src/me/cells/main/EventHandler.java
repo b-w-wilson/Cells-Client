@@ -48,7 +48,7 @@ public class EventHandler {
 	}
 
 	public void handleScrollEvent(long window, double xoffset, double yoffset) {
-		
+		CellsClient.getCurrentGui().handleScrollEvent(xoffset, yoffset);
 	}
 	
 }

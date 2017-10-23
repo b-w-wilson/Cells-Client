@@ -29,4 +29,11 @@ public interface GUI {
 	 * @param yPos
 	 */
 	public void onMouseMove(double xPos, double yPos);
+
+	public float getRotation();
+
+	public void handleScrollEvent(double xoffset, double yoffset);
+
+	public float getScale();
+
 }

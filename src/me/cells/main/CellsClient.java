@@ -1,24 +1,18 @@
 package me.cells.main;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
-import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
-import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
-import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
-import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
+import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
-import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.GL_LEQUAL;
 import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
@@ -37,19 +31,18 @@ import static org.lwjgl.opengl.GL11.glShadeModel;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-import java.nio.IntBuffer;
 import java.util.Random;
 import java.util.Scanner;
 
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
 
 import me.cells.UI.GUI;
 import me.cells.UI.GuiLoading;
 import me.cells.network.NetworkHandler;
-import me.cells.render.Renderer;
 import me.cells.render.CellsTextureLoader;
+import me.cells.render.Renderer;
 import me.cells.util.Config;
 import me.cells.world.CellsWorld;
 
@@ -153,7 +146,7 @@ public class CellsClient implements Runnable {
 		}));
 
 		//Sets up the rendering of the window with VSync capabilities, and the correct scaling.
-		GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		//GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		//glfwSetWindowPos(window, (vidmode.width() - Config.WIDTH) / 2, (vidmode.height() - Config.HEIGHT) / 2);
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(1);//VSYNC
@@ -165,9 +158,9 @@ public class CellsClient implements Runnable {
 		//Sets the colour of the background to black.
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClearDepth(1.0f);
-		//glEnable(GL_DEPTH_TEST);
+		glEnable(GL11.GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
-		glShadeModel(GL_SMOOTH);
+		//glShadeModel(GL_SMOOTH);
 		glEnable(GL_TEXTURE_2D);
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
