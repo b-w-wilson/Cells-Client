@@ -1,5 +1,10 @@
 package me.cells.world;
 
+/**
+ * Individual tile storage. Keeps things neat and tidy!
+ * @author bruce
+ *
+ */
 public class CellTile {
 	//public ArrayList<Cell> cellsOnTile = new ArrayList<Cell>();
 	public int tileX;

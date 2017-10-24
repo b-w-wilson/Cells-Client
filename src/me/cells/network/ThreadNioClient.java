@@ -17,6 +17,13 @@ import java.util.Map;
 
 import me.cells.util.Config;
 
+/**
+ * The NIO connection client. This does all the communicating, and is run on its
+ * own thread. E.g. dont touch pls, as its very delicate
+ * 
+ * @author bruce
+ *
+ */
 public class ThreadNioClient implements Runnable {
 
 	// The selector we'll be monitoring
@@ -32,7 +39,8 @@ public class ThreadNioClient implements Runnable {
 	private Map<SocketChannel, List<ByteBuffer>> pendingData = new HashMap<SocketChannel, List<ByteBuffer>>();
 
 	// Maps a SocketChannel to a ResponceHandler, e.g. the pieces of code waiting for data to be received from the server
-	private Map<SocketChannel, ResponceHandler> rspHandlers = Collections.synchronizedMap(new HashMap<SocketChannel, ResponceHandler>());
+	private Map<SocketChannel, ResponceHandler> rspHandlers = Collections
+			.synchronizedMap(new HashMap<SocketChannel, ResponceHandler>());
 
 	public void run() {
 		try {
@@ -130,7 +138,7 @@ public class ThreadNioClient implements Runnable {
 	//Once the channel is ready to be connected, this method is called and sets it to write, the connection is now ready for data transfer. Begin by writing the waiting data
 	private void completeConnection(SelectionKey key) throws IOException {
 		SocketChannel socketChannel = (SocketChannel) key.channel();
-		
+
 		try {
 			socketChannel.finishConnect();
 		} catch (IOException e) {
@@ -146,7 +154,6 @@ public class ThreadNioClient implements Runnable {
 		// Register an interest in writing on this channel
 		key.interestOps(SelectionKey.OP_WRITE);
 	}
-
 
 	//Read incoming data sent from the server
 	private void read(SelectionKey key) throws IOException {

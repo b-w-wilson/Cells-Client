@@ -1,5 +1,10 @@
 package me.cells.util;
 
+/**
+ * @deprecated Isnt used right now. Remove deprecated flag if it is.
+ * @author bruce
+ *
+ */
 public enum EnumDirection {
 
 	UP(0),

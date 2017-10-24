@@ -1,5 +1,10 @@
 package me.cells.network;
 
+/**
+ * Class for temporary holding of returned data, and waiting of connections. 
+ * @author bruce
+ *
+ */
 public class ResponceHandler {
 	byte[] rsp = null;
 	volatile boolean cancelled = false;

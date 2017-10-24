@@ -3,6 +3,11 @@ package me.cells.util;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 
+/**
+ * Where to store all values that will be changeable by a config file later on.
+ * @author bruce
+ *
+ */
 public class Config {
 
 	static GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();

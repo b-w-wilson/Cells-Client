@@ -46,7 +46,12 @@ import me.cells.render.Renderer;
 import me.cells.util.Config;
 import me.cells.world.CellsWorld;
 
-// Implements runnable thread
+/**
+ * Main class, sets up everything.
+ * 
+ * @author bruce
+ *
+ */
 public class CellsClient implements Runnable {
 
 	private final static CellsClient MAIN = new CellsClient();
@@ -55,7 +60,6 @@ public class CellsClient implements Runnable {
 	public long window;
 	public static double mouseX = 0;
 	public static double mouseY = 0;
-	
 
 	public final Renderer renderer = new Renderer();
 	public final EventHandler eventHandler = new EventHandler();
@@ -65,16 +69,18 @@ public class CellsClient implements Runnable {
 	public static final NetworkHandler NETWORK_HANDLER = new NetworkHandler();
 	public static final CellsWorld WORLD = new CellsWorld();
 
-	//Initial method. This is the method called by the JVM to start the program
+	//Starting method
 	public static void main(String[] args) {
 		thread = new Thread(MAIN, "Main Thread");
 		thread.setPriority(10);
 		thread.start();
-		//Open networking
 		NETWORK_HANDLER.openNetwork();
 	}
 
-	//Main run method, called when the thread is started.
+	/**
+	 * Thread run method. Configures a while loop to continuously run while sleeping
+	 * for 10 ms. Also runs the {@link #startGame} method
+	 */
 	@Override
 	public void run() {
 		//Assign true to running, and call the startGame method, the game has now been started
@@ -95,21 +101,11 @@ public class CellsClient implements Runnable {
 		}
 	}
 
-	//Ends the game, and destroys any GUI's, windows or callbacks.
-	public void closeGame() throws RuntimeException {
-		glfwFreeCallbacks(window);
-		glfwDestroyWindow(window);
-		glfwTerminate();
-		glfwSetErrorCallback(null).free();
-		Config.running = false;
-		if (getCurrentGui() != null) {
-			getCurrentGui().closeGame();
-		} else {
-			throw new RuntimeException("somethings broken as usual!");
-		}
-	}
-
-	//Starts the game 
+	/**
+	 * Does what it says, starts the game. Uses GLFW to create a window, and sets up
+	 * some basic openGL parameters. Creates the callbacks for keyboard, mouse etc.
+	 * and loads GuiLoading
+	 */
 	private void startGame() {
 		//Creates the window using GLFW, setting up error callbacks, and the actual window itself.
 		//glfwSetErrorCallback(GLFWErrorCallback.createPrint(System.err));
@@ -121,9 +117,8 @@ public class CellsClient implements Runnable {
 		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
 		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE);
 		//GLFW.glfwWindowHint(GLFW.GLFW_MAXIMIZED, GLFW.GLFW_TRUE);
-		window = glfwCreateWindow(Config.WIDTH, Config.HEIGHT, "Window", NULL /*glfwGetPrimaryMonitor()*/, NULL);
-	
-		
+		window = glfwCreateWindow(Config.WIDTH, Config.HEIGHT, "Window", NULL /* glfwGetPrimaryMonitor() */, NULL);
+
 		if (window == NULL) {
 			throw new RuntimeException("Failed to create the GLFW window");
 		}
@@ -140,7 +135,7 @@ public class CellsClient implements Runnable {
 		glfwSetCursorPosCallback(window, ((window, xpos, ypos) -> {
 			eventHandler.handleMousePositionEvent(window, xpos, ypos);
 		}));
-		
+
 		glfwSetScrollCallback(window, ((window, xoffset, yoffset) -> {
 			eventHandler.handleScrollEvent(window, xoffset, yoffset);
 		}));
@@ -155,6 +150,7 @@ public class CellsClient implements Runnable {
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glViewport(0, 0, Config.WIDTH, Config.HEIGHT);
+		//perspectiveGL(120, Config.WIDTH / Config.HEIGHT, 1000, 1);
 		//Sets the colour of the background to black.
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClearDepth(1.0f);
@@ -169,13 +165,51 @@ public class CellsClient implements Runnable {
 		glLoadIdentity();
 	}
 
-	//Switch the GUI by replacing the current GUI with the new one from the parameter. Then clear all objects, before calling the init method of the new GUI
+	/**
+	 * Fancy maths to setup an openGL matrix that does what we need it to.
+	 * @param fovY
+	 * @param aspect
+	 * @param zNear
+	 * @param zFar
+	 */
+	void perspectiveGL(double fovY, double aspect, double zNear, double zFar) {
+		double fW, fH;
+		fH = Math.tan(fovY / 360 * Math.PI) * zNear;
+		fW = fH * aspect;
+
+		GL11.glFrustum(-fW, fW, -fH, fH, zNear, zFar);
+	}
+
+	/**Ends the game, and destroys any GUI's, windows or callbacks.
+	 * 
+	 * @throws RuntimeException If something fails
+	 */
+	public void closeGame() throws RuntimeException {
+		glfwFreeCallbacks(window);
+		glfwDestroyWindow(window);
+		glfwTerminate();
+		glfwSetErrorCallback(null).free();
+		Config.running = false;
+		if (getCurrentGui() != null) {
+			getCurrentGui().closeGame();
+		} else {
+			throw new RuntimeException("somethings broken as usual!");
+		}
+	}
+
+	/**Switch the GUI by replacing the current GUI with the new one from the parameter. Then clear all objects, before calling the init method of the new GUI
+	 * 
+	 * @param ui new GUI to be put in the currents place
+	 */
 	public static synchronized void switchGUI(GUI ui) {
 		currentGui = ui;
 		ui.init();
 	}
 
-	//Run tick method, runs every 10 milliseconds and renders everything in the game.
+	/**
+	 * Run tick method, seperate to thread Run method, very different, runs every 10 milliseconds and does everything.
+	 * @throws RuntimeException
+	 */
 	public void runTick() throws RuntimeException {
 		if (glfwWindowShouldClose(window)) {
 			closeGame();
@@ -183,12 +217,18 @@ public class CellsClient implements Runnable {
 		renderer.render();
 	}
 
-	//Getter method for the currently displayed GUI, and returns that GUI
+	/**
+	 * Getter method for the currently displayed GUI, and returns that GUI
+	 * @return the current GUI
+	 */
 	public static GUI getCurrentGui() {
 		return currentGui;
 	}
 
-	//This class getter for external classes needing to refer to this class
+	/**
+	 * This class getter for external classes needing to refer to this class
+	 * @return The running instance of the main class. Used for thread safety
+	 */
 	public static CellsClient getMain() {
 		return MAIN;
 	}
